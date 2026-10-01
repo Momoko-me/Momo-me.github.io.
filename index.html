@@ -1,0 +1,454 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HEARTSTEEL — Gift Protocol</title>
+<style>
+:root{
+  --bg:#08090c; --bg2:#111218; --card:#191a21; --text:#f2f3f5;
+  --muted:#a7adb8; --line:#383d48; --gold:#d6a84f;
+  --kayn:#b92d4f; --kayn2:#e44767; --kaynDark:#3a111c;
+  --ez:#27b6c7; --ez2:#63e1e5; --ezDark:#12283a;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; min-height:100vh; background:
+  radial-gradient(circle at 15% 10%,rgba(185,45,79,.12),transparent 28%),
+  radial-gradient(circle at 85% 20%,rgba(39,182,199,.10),transparent 30%),
+  var(--bg);
+  color:var(--text); font-family:Inter,Segoe UI,Arial,sans-serif;
+}
+button,a{font:inherit}
+a{color:inherit;text-decoration:none}
+.topbar{
+  position:sticky;top:0;z-index:10;backdrop-filter:blur(14px);
+  background:rgba(8,9,12,.82);border-bottom:1px solid rgba(255,255,255,.08);
+}
+.nav{
+  max-width:1120px;margin:auto;padding:16px 24px;display:flex;
+  align-items:center;justify-content:space-between;gap:20px;
+}
+.brand{letter-spacing:.22em;font-family:Georgia,serif;font-size:18px}
+.brand small{display:block;font:10px/1.2 Arial;letter-spacing:.38em;color:var(--muted);margin-top:3px}
+.navlinks{display:flex;gap:8px;flex-wrap:wrap}
+.navlinks button{
+  border:1px solid #30343d;background:#14161c;color:#bfc4ce;
+  padding:8px 11px;border-radius:7px;cursor:pointer;font-size:12px
+}
+.navlinks button:hover{color:white;border-color:#656b77}
+main{max-width:1120px;margin:auto;padding:42px 24px 70px}
+.page{display:none;animation:fade .35s ease}
+.page.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.hero{text-align:center;padding:55px 0 30px}
+.eyebrow{font-size:11px;letter-spacing:.3em;color:var(--muted);text-transform:uppercase}
+h1{font:clamp(42px,7vw,82px)/.95 Georgia,serif;letter-spacing:.12em;margin:14px 0 12px}
+h2{font:clamp(30px,5vw,54px)/1 Georgia,serif;margin:0 0 16px}
+h3{margin:0 0 10px;font-size:18px}
+.subtitle{max-width:680px;margin:0 auto;color:var(--muted);line-height:1.7}
+.route-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:30px}
+.route{
+  position:relative;overflow:hidden;border:1px solid var(--line);border-radius:16px;
+  min-height:360px;padding:28px;display:flex;flex-direction:column;justify-content:end;
+  background:linear-gradient(145deg,#111218,#08090c);
+}
+.route.kayn{border-color:#68213a;background:radial-gradient(circle at 80% 20%,rgba(228,71,103,.22),transparent 35%),linear-gradient(145deg,#1b0d13,#08090c)}
+.route.ez{border-color:#176080;background:radial-gradient(circle at 80% 20%,rgba(99,225,229,.18),transparent 35%),linear-gradient(145deg,#0c1d2a,#08090c)}
+.route-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.78;transition:transform .35s ease,opacity .35s ease}
+.route:hover .route-img{transform:scale(1.035);opacity:.9}
+.route-art{
+  position:absolute;inset:0;opacity:.6;
+  background:
+    linear-gradient(135deg,transparent 35%,rgba(255,255,255,.025) 36%,transparent 37%),
+    repeating-linear-gradient(125deg,transparent 0 28px,rgba(255,255,255,.018) 29px 30px);
+}
+.route.kayn .route-art{box-shadow:inset -120px -40px 180px rgba(185,45,79,.25)}
+.route.ez .route-art{box-shadow:inset -120px -40px 180px rgba(39,182,199,.22)}
+.route-content{position:relative;z-index:1}
+.route-tag{font-size:12px;letter-spacing:.22em;font-weight:700}
+.route.kayn .route-tag{color:var(--kayn2)} .route.ez .route-tag{color:var(--ez2)}
+.route p{color:#aeb3bd;line-height:1.55;max-width:430px}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  border:0;border-radius:7px;padding:13px 20px;font-weight:700;
+  letter-spacing:.06em;cursor:pointer;transition:.2s;margin-top:10px;
+}
+.btn.kayn{background:var(--kayn);color:white}.btn.kayn:hover{background:var(--kayn2)}
+.btn.ez{background:var(--ez);color:#061217}.btn.ez:hover{background:var(--ez2)}
+.btn.dark{background:#20242c;color:white;border:1px solid #3b414c}
+.two-col{display:grid;grid-template-columns:360px 1fr;gap:34px;align-items:stretch}
+.character{
+  min-height:560px;border-radius:16px;border:1px solid var(--line);
+  display:flex;align-items:end;padding:25px;position:relative;overflow:hidden;
+  background:#101218;
+}
+.character.kayn{border-color:#68213a}
+.character.ez{border-color:#176080}
+.character.has-bg:before,
+.character.has-bg:after{display:none}
+.character .sig{position:relative;font:italic 42px Georgia;color:rgba(255,255,255,.35)}
+.letter{
+  background:rgba(20,22,28,.74);border:1px solid var(--line);border-radius:16px;
+  padding:32px;backdrop-filter:blur(8px);
+}
+.letter.kayn{border-color:#4b1d2a}.letter.ez{border-color:#164653}
+.letter p{font-size:16px;line-height:1.78;margin:0 0 18px;color:#d8dbe0}
+.letter .greeting{font-size:22px;color:white;font-weight:700}
+.bullet{margin:0 0 18px;padding-left:22px}
+.bullet li{margin:10px 0;line-height:1.65;color:#d2d6dc}
+.signature{margin-top:26px;padding-top:18px;border-top:1px solid var(--line);color:var(--muted);font-style:italic}
+.code-wrap{max-width:760px;margin:35px auto}
+.code-card{
+  border-radius:18px;padding:38px;text-align:center;border:1px solid var(--line);
+  background:linear-gradient(145deg,#14161c,#0c0d11);
+}
+.code-card.kayn{border-color:#8d2340;box-shadow:0 0 60px rgba(185,45,79,.10)}
+.code-card.ez{border-color:#1d8da0;box-shadow:0 0 60px rgba(39,182,199,.10)}
+.reward{font-size:52px;font-family:Georgia,serif;margin:12px 0 28px}
+.code-box{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  border:1px solid var(--line);background:#08090c;border-radius:10px;padding:16px 18px;
+  margin:15px 0 8px;
+}
+.code-value{font:700 22px/1.2 ui-monospace,SFMono-Regular,Consolas,monospace;letter-spacing:.09em;word-break:break-all}
+.copy{
+  flex:0 0 auto;border:1px solid #454b57;background:#1b1f26;color:white;
+  border-radius:6px;padding:9px 12px;cursor:pointer;font-size:12px
+}
+.copy:hover{background:#292e37}
+.note{font-size:12px;color:var(--muted);line-height:1.6}
+.conditions{
+  text-align:left;margin-top:28px;padding:20px;border-radius:10px;background:#111318;border:1px solid #292d36
+}
+.conditions h3{font-size:14px;letter-spacing:.08em;text-transform:uppercase}
+.conditions ul{margin:0;padding-left:20px}
+.conditions li{margin:8px 0;color:#bfc4cd;font-size:13px;line-height:1.5}
+.actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:22px}
+.notice{
+  max-width:760px;margin:0 auto 22px;padding:13px 16px;border:1px dashed #3a3f49;
+  border-radius:8px;color:#aeb4be;font-size:12px;line-height:1.5
+}
+.footer{border-top:1px solid #22262e;margin-top:50px;padding-top:22px;color:#747b87;font-size:11px;text-align:center;letter-spacing:.08em}
+.toast{
+  position:fixed;bottom:24px;left:50%;transform:translate(-50%,20px);opacity:0;
+  background:#f2f3f5;color:#08090c;padding:10px 16px;border-radius:7px;font-size:13px;
+  transition:.25s;z-index:20
+}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.small-link{background:none;border:0;color:#aeb4be;text-decoration:underline;cursor:pointer;padding:0}
+@media(max-width:780px){
+ .route-grid,.two-col{grid-template-columns:1fr}
+ .character{min-height:260px}
+ .letter{padding:22px}
+ .code-box{flex-direction:column;align-items:stretch}
+ .copy{width:100%}
+ .nav{align-items:flex-start}.navlinks{justify-content:flex-end}
+}
+ol li{margin:10px 0}strong{color:#f2f3f5}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <nav class="nav">
+    <button class="small-link" onclick="go('home')" aria-label="На главную">
+      <span class="brand">HEARTSTEEL<small>GIFT PROTOCOL</small></span>
+    </button>
+    <div class="navlinks">
+      <button onclick="go('kayn')">KAYN</button>
+      <button onclick="go('ezreal')">EZREAL</button>
+    </div>
+  </nav>
+</header>
+
+<main>
+<section id="home" class="page active">
+  <div class="hero">
+    <div class="eyebrow">A birthday gift // classified</div>
+    <h1>HEARTSTEEL</h1>
+    <p class="subtitle">Два брелока. Два маршрута. Один подарок.<br>Выбери персонажа и открой свою часть подарка.</p>
+  </div>
+  <div class="route-grid">
+    <article class="route kayn">
+      <img class="route-img" src="Kayn.png" alt="Kayn">
+      <div class="route-art"></div>
+      <div class="route-content">
+        <div class="route-tag">KAYN // SHADOW</div>
+        <h2>Мастер Теней</h2>
+        <p>Первый артефакт обнаружен. Рааст недоволен, но разрешает продолжить.</p>
+        <button class="btn kayn" onclick="go('kayn')">ОТКРЫТЬ</button>
+      </div>
+    </article>
+    <article class="route ez">
+      <img class="route-img" src="Ezreal.png" alt="Ezreal">
+      <div class="route-art"></div>
+      <div class="route-content">
+        <div class="route-tag">EZREAL // HEARTSTEEL</div>
+        <h2>Исследователь</h2>
+        <p>Неизвестный объект найден. Система подозревает, что это подарок.</p>
+        <button class="btn ez" onclick="go('ezreal')">ОТКРЫТЬ</button>
+      </div>
+    </article>
+  </div>
+  <div class="footer">HEARTSTEEL // GIFT PROTOCOL · Два брелока. Один подарок.</div>
+</section>
+
+<section id="kayn" class="page">
+  <div class="two-col">
+    <div class="character kayn has-bg"
+         style="background-image:url('Kayn.png');background-size:contain;background-repeat:no-repeat;background-position:center;">
+      <div class="sig">Kayn</div>
+    </div>
+    <article class="letter kayn">
+      <div class="eyebrow">HEARTSTEEL // KAYN</div>
+      <p class="greeting">Дорогая Луна.</p>
+      <p>Я — Шиэда Каин, Мастер Теней. И даже мой... спутник Рааст, который обычно жаждет крови и разрушения, сегодня согласен со мной: твой день рождения — достойный повод отложить клинок в сторону.</p>
+      <p>Поздравляю тебя с этой датой.</p>
+      <p>Пусть всё в твоей жизни идёт так, как ты хочешь. А то, чего ты не хочешь, пусть обходит тебя стороной — быстро и без лишнего шума, как тень, которую я оставляю за спиной.</p>
+      <p>Желаю тебе:</p>
+      <ul class="bullet">
+        <li>Здоровья, которое не будет мучить тебя так, как Рааст мучает меня своими разговорами.</li>
+        <li>Денег, чтобы ты могла позволить себе любой скин, не глядя на цену.</li>
+        <li>Счастья — настоящего, а не того, что продаётся за RP.</li>
+      </ul>
+      <p>И пусть в твоих играх в Лиге Легенд:</p>
+      <ul class="bullet">
+        <li>Попадаются только хорошие тиммейты. Те, кто не фидит и не руинит, а реально тянет катку.</li>
+        <li>Лига никогда не лагает. Пинг — ровный, как лезвие моей косы.</li>
+        <li>А враги бегут от одного твоего вида, даже если ты просто выходишь из кустов.</li>
+      </ul>
+      <p>Будь сильной. Будь той, кто диктует правила. И помни: слабость боится теней. Но тени боятся тебя.</p>
+      <div class="signature">С днём рождения. — Каин<br><span style="font-size:13px">И, ладно уж, Рааст тоже передаёт привет. Он ворчит, но это значит «с праздником».</span></div>
+      <div class="actions">
+        <button class="btn kayn" onclick="go('kayn-code')">ПОЛУЧИТЬ КОД</button>
+        <button class="btn dark" onclick="go('home')">← НАЗАД</button>
+      </div>
+    </article>
+  </div>
+</section>
+
+<section id="kayn-code" class="page">
+  <div class="hero">
+    <div class="eyebrow" style="color:var(--kayn2)">KAYN // REWARD</div>
+    <h2>Награда обнаружена.</h2>
+    <p class="subtitle">Остался последний шаг — сохранить код и активировать его.</p>
+  </div>
+  <div class="code-wrap">
+    <div class="code-card kayn">
+      <div class="eyebrow" style="color:var(--kayn2)">REWARD DETECTED</div>
+      <div class="reward">1000 ₽</div>
+      <div style="font-size:12px;color:var(--muted)">Твой код:</div>
+      <div class="code-box">
+        <div id="kaynCode" class="code-value">ХРАНИТЕЛЬЛЕГЕНД3355</div>
+        <button class="copy" onclick="copyCode('kaynCode')">СКОПИРОВАТЬ</button>
+      </div>
+      <div class="note">Нажми «Скопировать», чтобы сохранить код.</div>
+      <div class="conditions">
+        <h3>Условия использования</h3>
+        <ul>
+          <li>Код предназначен для использования на IGM.GG.</li>
+          <li>Номинал: 1000 ₽.</li>
+          <li>Перед активацией проверь актуальные условия и срок действия кода.</li>
+          <li>Если код не принимается, не пытайся активировать его многократно — сначала проверь условия.</li>
+          <li>Код одноразовый. Не передавай его другим людям.</li>
+        </ul>
+      </div>
+      <div class="actions">
+        <button class="btn kayn" onclick="go('kayn-conditions')">УСЛОВИЯ АКТИВАЦИИ →</button>
+        <button class="btn dark" onclick="go('kayn')">← К ПОЗДРАВЛЕНИЮ</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="ezreal" class="page">
+  <div class="two-col">
+    <div class="character ez has-bg"
+         style="background-image:url('Ezreal.png');background-size:contain;background-repeat:no-repeat;background-position:center;">
+      <div class="sig">Ezreal</div>
+    </div>
+    <article class="letter ez">
+      <div class="eyebrow" style="color:var(--ez2)">HEARTSTEEL // EZREAL</div>
+      <p class="greeting">Привет, Луна! Это Эзреаль.</p>
+      <p>Да-да, тот самый Эзреаль. Главный вокалист HEARTSTEEL, величайший исследователь и, не побоюсь этого слова, человек, который знает толк в хороших вечеринках.</p>
+      <p>Поздравляю тебя с днём рождения! 🎉</p>
+      <p>Желаю тебе, чтобы жизнь была похожа на самое крутое приключение: полное открытий, ярких моментов и неожиданных (но обязательно приятных!) поворотов.</p>
+      <p>Пусть всё идёт в кайф. Так, как ты хочешь. А если что-то идёт не так — ну, значит, это просто побочный квест, который ты легко пройдёшь и получишь награду.</p>
+      <p>И конечно, куда же без Лиги:</p>
+      <ul class="bullet">
+        <li>Пусть твой ранг растёт так же быстро, как моя слава. (А моя слава, поверь, растёт очень быстро.)</li>
+        <li>Пусть в команде попадаются только адекватные люди. Ну, или хотя бы те, кто умеет нажимать кнопки.</li>
+        <li>Пусть сервер никогда не лагает, а твой интернет будет стабильнее, чем моя уверенность в собственной неотразимости.</li>
+        <li>И пусть твой KDA всегда будет положительным. Это я тебе как эксперт говорю.</li>
+      </ul>
+      <p>Здоровья тебе, денег на новые скины и счастья. Настоящего, а не как у тех, кто играет на 30 FPS.</p>
+      <div class="signature">С днём рождения! — Эзреаль<br><span style="font-size:16px;color:var(--ez2)">It's all skill!</span></div>
+      <div class="actions">
+        <button class="btn ez" onclick="go('ezreal-code')">ПОЛУЧИТЬ КОД</button>
+        <button class="btn dark" onclick="go('home')">← НАЗАД</button>
+      </div>
+    </article>
+  </div>
+</section>
+
+<section id="ezreal-code" class="page">
+  <div class="hero">
+    <div class="eyebrow" style="color:var(--ez2)">EZREAL // REWARD</div>
+    <h2>REWARD DETECTED</h2>
+    <p class="subtitle">Система подтверждает наличие подарка.</p>
+  </div>
+  <div class="code-wrap">
+    <div class="code-card ez">
+      <div class="eyebrow" style="color:var(--ez2)">MISSION REWARD</div>
+      <div class="reward">1000 ₽</div>
+      <div style="font-size:12px;color:var(--muted)">Твой код:</div>
+      <div class="code-box">
+        <div id="ezCode" class="code-value">https://donatov.net/dcard/520555/01M0ZWFJTK17CN85PS90875HY6</div>
+        <button class="copy" onclick="copyCode('ezCode')">СКОПИРОВАТЬ</button>
+      </div>
+      <div class="note">Скопируй код перед переходом на платформу.</div>
+      <div class="conditions">
+        <h3>Как активировать</h3>
+        <ul>
+          <li>Скопируй код.</li>
+          <li>Перейди к инструкции активации Donatov.net.</li>
+          <li>Авторизуйся на официальном сайте Donatov.net.</li>
+          <li>Введи уникальный код карты и подтверди активацию.</li>
+          <li>Проверь зачисление номинала на DWallet.</li>
+        </ul>
+      </div>
+      <div class="actions">
+        <button class="btn ez" onclick="go('ezreal-conditions')">УСЛОВИЯ АКТИВАЦИИ →</button>
+        <button class="btn dark" onclick="go('ezreal')">← К ПОЗДРАВЛЕНИЮ</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="kayn-conditions" class="page">
+  <div class="hero">
+    <div class="eyebrow" style="color:var(--kayn2)">KAYN // IGM.GG</div>
+    <h2>Как активировать подарок</h2>
+    <p class="subtitle">Перед переходом на IGM.GG сохрани код и ознакомься с условиями его использования.</p>
+  </div>
+  <div class="code-wrap">
+    <div class="code-card kayn" style="text-align:left">
+      <div class="conditions" style="margin-top:0">
+        <h3>Инструкция IGM.GG</h3>
+        <ol style="padding-left:22px;color:#d2d6dc;line-height:1.7">
+          <li>Зайдите на сайт магазина IGM.GG, зарегистрируйтесь или авторизуйтесь в своем аккаунте.</li>
+          <li>Выберите товары в каталоге и добавьте в корзину игру, на которую хотите применить сертификат.</li>
+          <li>Перейдите в корзину, проверьте список выбранных товаров и общую сумму заказа.</li>
+          <li>Найдите поле «У вас есть промокод?» в корзине и впишите полученный код из сертификата. Внимательно проверьте регистр букв и отсутствие лишних пробелов.</li>
+          <li>Нажмите кнопку «Применить» и убедитесь, что промокод активировался, а сумма заказа изменилась.</li>
+          <li>Перейдите к оплате и завершите оформление заказа. Даже при полном погашении стоимости корзины промокодом необходимо будет оплатить 1 ₽.</li>
+        </ol>
+      </div>
+
+      <div class="conditions">
+        <h3>Важно</h3>
+        <p style="color:#bfc4cd;line-height:1.7;margin:0">
+          Сертификат действителен только один раз, а разница в стоимости не возвращается.
+          Постарайся потратить всю сумму за один заказ — например, добавив в корзину ещё одну
+          или несколько игр до полного номинала сертификата.
+        </p>
+        <p style="color:#bfc4cd;line-height:1.7">
+          Также можно выбрать игру с более высокой стоимостью и покрыть часть заказа сертификатом,
+          а оставшуюся сумму оплатить самостоятельно.
+        </p>
+      </div>
+
+      <div class="notice">
+        Инструкция приведена по условиям, которые были указаны для этого подарка.
+        Если IGM изменит интерфейс или правила использования промокодов, ориентируйся на актуальные условия магазина.
+      </div>
+
+      <div class="actions">
+        <a class="btn kayn" href="https://igm.gg/" target="_blank" rel="noopener">ПЕРЕЙТИ НА IGM.GG ↗</a>
+        <button class="btn dark" onclick="go('kayn-code')">← К КОДУ</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="ezreal-conditions" class="page">
+  <div class="hero">
+    <div class="eyebrow" style="color:var(--ez2)">EZREAL // DONATOV.NET</div>
+    <h2>Как активировать подарок</h2>
+    <p class="subtitle">Твой подарок — фирменная подарочная карта Donatov.net (DCard).</p>
+  </div>
+  <div class="code-wrap">
+    <div class="code-card ez" style="text-align:left">
+      <div class="conditions" style="margin-top:0">
+        <h3>Активация DCard</h3>
+        <ol style="padding-left:22px;color:#d2d6dc;line-height:1.7">
+          <li>Авторизуйтесь в личном кабинете на официальном сайте Donatov.net.</li>
+          <li>Перейдите в раздел профиля DCard или воспользуйтесь прямой ссылкой на активацию.</li>
+          <li>Введите уникальный цифровой код вашей карты в поле ввода.</li>
+          <li>Нажмите кнопку подтверждения.</li>
+          <li>Номинал карты будет зачислен в виде внутренней валюты DCoin (1 DCoin = 1 рубль) на электронный кошелёк DWallet.</li>
+        </ol>
+      </div>
+
+      <div class="conditions">
+        <h3>Главные правила использования</h3>
+        <ul>
+          <li><strong>Срок действия:</strong> подарочная карта действительна в течение 12 месяцев с момента покупки.</li>
+          <li><strong>Ограничения:</strong> карты Donatov.net не имеют региональных ограничений и лимитов на количество активаций на одном аккаунте.</li>
+          <li><strong>Куда потратить:</strong> полученными DCoin можно оплатить до 100% стоимости любого товара на сайте: игровой донат, валюту, подписки или карты пополнения других сервисов (Steam, PlayStation, Apple, Xbox и др.).</li>
+          <li><strong>Комиссия:</strong> при оплате с кошелька DWallet комиссия составляет 0%.</li>
+        </ul>
+      </div>
+
+      <div class="notice">
+        Перед активацией убедись, что ты вошла именно в тот аккаунт Donatov.net,
+        на который хочешь получить номинал карты.
+      </div>
+
+      <div class="actions">
+        <a class="btn ez" href="https://donatov.net/dcard/520555/01M0ZWFJTK17CN85PS90875HY6" target="_blank" rel="noopener">АКТИВИРОВАТЬ DCard ↗</a>
+        <button class="btn dark" onclick="go('ezreal-code')">← К КОДУ</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<div id="toast" class="toast">Код скопирован.</div>
+
+<script>
+const pages = ['home','kayn','kayn-code','kayn-conditions','ezreal','ezreal-code','ezreal-conditions'];
+
+function go(id){
+  pages.forEach(p => {
+    const el=document.getElementById(p);
+    if(el) el.classList.toggle('active',p===id);
+  });
+  history.replaceState(null,'','#'+id);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function copyCode(id){
+  const text=document.getElementById(id).textContent.trim();
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(text).then(showToast).catch(()=>fallbackCopy(text));
+  }else fallbackCopy(text);
+}
+function fallbackCopy(text){
+  const ta=document.createElement('textarea');
+  ta.value=text;document.body.appendChild(ta);ta.select();
+  document.execCommand('copy');ta.remove();showToast();
+}
+function showToast(){
+  const t=document.getElementById('toast');
+  t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1600);
+}
+window.addEventListener('load',()=>{
+  const id=location.hash.replace('#','');
+  if(pages.includes(id)) go(id);
+});
+</script>
+</body>
+</html>
